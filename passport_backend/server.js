@@ -9,6 +9,10 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
 const User = require("./user");
+ 
+var fetch = require('node-fetch');
+var SECRET_KEY = "6LdFmGsbAAAAAInWLdijAFEf_gD968l6Wh5NGMZE";
+ 
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
 mongoose.connect(
   "mongodb+srv://testUser2:12345@cluster0.typyf.mongodb.net/authentication?retryWrites=true&w=majority",
@@ -65,6 +69,15 @@ app.post("/login", (req, res, next) => {
 //     failureFlash: true
 //   })(req, res, next);
 // });
+
+//Google Captcha
+app.post('/verify', (req, res) => {
+  var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${req.body['g-recaptcha-response']}`;
+  return fetch(VERIFY_URL, { method: 'POST' })
+    .then(res => res.json())
+    .then(json => res.send(json));
+});
+ 
 
 
 app.post("/register", (req, res) => {
